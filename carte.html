@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	<style>
+		body {
+            padding: 0;
+            margin: 0;
+			display: inline;
+        }
+		
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+		
+		.menu {
+		  float: left;
+		  height: 100%;
+		  width: 15%;
+		}
+		
+		#map{
+			float: right;
+			height: 100%;
+			width: 100%;
+		}
+	
+	</style>
+</head>
+<body>
+	<fieldset>
+		<legend>Confédération</legend>
+		<label for="checkbox-1">Kendalc'h</label>
+		<input type="checkbox" name="checkbox-1" id="checkbox-1">
+		<label for="checkbox-2">Warleur</label>
+		<input type="checkbox" name="checkbox-2" id="checkbox-2">
+	</fieldset>
+
+	<div id='map'></div>
+<script>
+
+	var warleur = [
+		{lat:"47.384517", long:"-1.184707", ville:"Ancenis"},
+		{lat:"47.932194", long:"-3.696922", ville:"Bannalec"},
+		{lat:"47.277494", long:"-2.461981", ville:"Batz sur mer"},
+		{lat:"48.070368", long:"-4.510383", ville:"Beuzec-Cap-Sizun"},
+		{lat:"47.585636", long:"1.330651", ville:"Blois"},
+		{lat:"44.840229", long:"-0.572598", ville:"Bordeaux"},
+		{lat:"49.181363", long:"-0.369858", ville:"Caen"},
+		{lat:"48.117979", long:"-1.603370", ville:"Cesson-Sévigné"},
+		{lat:"48.041664", long:"-1.705504", ville:"Chartres de Bretagne"},
+		{lat:"45.785980", long:"3.096761", ville:"Clermont-Ferrand"},
+		{lat:"47.092043", long:"-1.280056", ville:"Clisson"},
+		{lat:"47.879570", long:"-4.160159", ville:"Combrit"},
+		{lat:"47.885208", long:"-3.916485", ville:"Concarneau"},
+		{lat:"48.250198", long:"-4.501325", ville:"Crozon"},
+		{lat:"47.998652", long:"-3.891610", ville:"Elliant"},
+		{lat:"49.645308", long:"-1.677965", ville:"Equeurdreville"},
+		{lat:"47.914358", long:"-3.972026", ville:"La Forêt-Fouesnant"},
+		{lat:"47.873968", long:"-4.030651", ville:"Fouesnant"},
+		{lat:"49.029025", long:"2.469212", ville:"Goussainville"},
+		{lat:"47.325262", long:"-2.430148", ville:"Guérande"},
+		{lat:"47.292901", long:"-2.355609", ville:"La Baule"},
+		{lat:"48.091527", long:"-4.067280", ville:"Landrévarzec"},
+		{lat:"47.835185", long:"-3.161511", ville:"Languidic"},
+		{lat:"47.705582", long:"-3.383595", ville:"Larmor-Plage"},
+		{lat:"47.294221", long:"-2.512047", ville:"Le Croisic"},
+		{lat:"48.064673", long:"-3.362663", ville:"Le Croisty"},
+		{lat:"48.127868", long:"-1.819385", ville:"L'hermitage"},
+		{lat:"47.237155", long:"-1.348309", ville:"Le Loroux-Bottereau"},
+		{lat:"50.629530", long:"3.055399", ville:"Lille"},
+		{lat:"47.713017", long:"-3.112076", ville:"Locoal Mendon"},
+		{lat:"47.755788", long:"-3.375699", ville:"Lorient - Armor Argoat"},
+		{lat:"47.751995", long:"-3.359099", ville:"Lorient - Bugale an Oriant"},
+		{lat:"47.745041", long:"-3.364893", ville:"Lorient - Brizeux"},
+		{lat:"47.810434", long:"-2.382659", ville:"Malestroit"},
+		{lat:"47.980871", long:"-3.110444", ville:"Melrand"},
+		{lat:"47.216493", long:"-1.548759", ville:"Nantes"},
+		{lat:"47.609782", long:"-2.679854", ville:"Noyalo"},
+		{lat:"47.904235", long:"1.909502", ville:"Orléans"},
+		//{lat:"?", long:"?", ville:"Pays d'Iroise"},
+		{lat:"48.816376", long:"-3.446718", ville:"Perros-guirec"},
+		{lat:"48.534341", long:"-2.769335", ville:"Plérin"},
+		{lat:"47.650707", long:"-3.071746", ville:"Plœmel"},
+		{lat:"47.866977", long:"-4.217055", ville:"Pont-l’Abbé"},
+		{lat:"48.010741", long:"-1.704158", ville:"Pont-Péan"},
+		{lat:"48.344869", long:"-1.828308", ville:"Québriac"},
+		{lat:"47.959958", long:"-3.535503", ville:"Querrien"},
+		{lat:"47.985176", long:"-4.075381", ville:"Quimper Danserien Kemper"},
+		{lat:"48.006824", long:"-4.116065", ville:"Quimper Moulin Vert"},
+		{lat:"47.980855", long:"-4.120823", ville:"Quimper Penhars"},
+		{lat:"47.873284", long:"-3.548145", ville:"Quimperlé"},
+		{lat:"48.117391", long:"-1.677810", ville:"Rennes"},
+		{lat:"47.842750", long:"-3.694644", ville:"Riec-sur-Bélon"},
+		{lat:"47.313912", long:"-2.307971", ville:"Saint-André-des-Eaux"},
+		{lat:"48.632524", long:"-2.254180", ville:"Saint-Cast-Le-Guildo"},
+		{lat:"48.153230", long:"-1.679468", ville:"Saint-Grégoire"},
+		{lat:"48.649111", long:"-2.027558", ville:"Saint-Malo"},
+		{lat:"48.685154", long:"-3.985751", ville:"Saint-Pol-de-Léon"},
+		{lat:"48.648031", long:"-2.827870", ville:"Saint-Quay-Portrieux"},
+		{lat:"47.658464", long:"-2.762035", ville:"Vannes"},
+		{lat:"48.045729", long:"-1.604808", ville:"Vern-sur-seiche"} 
+	]	
+	
+	var kendalch = [
+		{lat:"47.347144", long:"-2.502782", ville:"La Turballe"},
+		{lat:"48.004673", long:"-4.096852", ville:"Kerfeunteun"},
+		{lat:"47.675795", long:"-2.964475", ville:"Pluneret"},
+		{lat:"48.066307", long:"-2.965708", ville:"Pontivy"},
+		{lat:"48.124697", long:"-3.070570", ville:"Cléguérec"},
+		{lat:"47.666780", long:"-2.983934", ville:"Auray"},
+		{lat:"48.192451", long:"-3.718046", ville:"Spézet"},
+		{lat:"47.936984", long:"-4.019808", ville:"Saint-Evarzec"},
+		{lat:"47.918562", long:"-2.819527", ville:"Moréac"},
+		{lat:"48.619500", long:"-3.097856", ville:"Pommerit-le-Vicomte"},
+		{lat:"48.315406", long:"-3.158834", ville:"Saint-Nicolas-du-Pélem"},
+		{lat:"48.928995", long:"2.046667", ville:"Poissy"},
+		{lat:"48.202255", long:"-2.988625", ville:"Mûr-de-Bretagne "},
+		{lat:"47.763911", long:"-3.345741", ville:"Lanester"},
+		{lat:"48.374209", long:"-4.365733", ville:"Plougastel"},
+		{lat:"48.236207", long:"-3.317357", ville:"Rostrenen"},
+		{lat:"47.182175", long:"-2.150953", ville:"Saint-Michel-Chef-Chef"},
+		{lat:"47.328753", long:"-2.431518", ville:"Guérande"},
+		{lat:"48.510169", long:"-4.071916", ville:"Landivisiau"},
+		{lat:"47.621884", long:"-1.612038", ville:"Jans"},
+		{lat:"48.522205", long:"-1.898099", ville:"Miniac-Morvan"},
+		{lat:"47.796501", long:"-3.580423", ville:"Clohars-Carnoët"},
+		{lat:"48.195678", long:"-4.094812", ville:"Châteaulin"},
+		{lat:"48.004673", long:"-4.096852", ville:"Kerfeunteun Ados"},
+		{lat:"47.167991", long:"-1.473840", ville:"Vertou"},
+		{lat:"48.499630", long:"-2.840569", ville:"La Méaugon"},
+		{lat:"48.856783", long:"2.347400", ville:"Paris"},
+		{lat:"48.779228", long:"-3.050665", ville:"Paimpol"},
+		{lat:"48.275534", long:"-3.575146", ville:"Carhaix"},
+		{lat:"48.142613", long:"-1.953115", ville:"Montfort-sur-Meu"},
+		{lat:"47.903083", long:"-4.278114", ville:"Plonéour-Lanvern"},
+		{lat:"48.466232", long:"-2.087159", ville:"Quévert"},
+		{lat:"48.066307", long:"-2.965708", ville:"Pontivy Ados"},
+		{lat:"47.356133", long:"-1.861189", ville:"Malville"},
+		{lat:"48.776368", long:"2.001872", ville:"Trappes"},
+		{lat:"48.202255", long:"-2.988625", ville:"Mûr-de-Bretagne Ados"},
+		{lat:"48.946914", long:"2.245633", ville:"Argenteuil"},
+		{lat:"47.666780", long:"-2.983934", ville:"Auray Ados"},
+		{lat:"48.100640", long:"-1.793846", ville:"Le Rheu"},
+		{lat:"48.403325", long:"-2.908956", ville:"Quintin"},
+		{lat:"48.941254", long:"2.161949", ville:"Sartrouville"},
+		{lat:"48.514308", long:"-2.768637", ville:"Saint-Brieuc"},
+		{lat:"48.117621", long:"-1.678325", ville:"Rennes CC"},
+		{lat:"47.675807", long:"-3.168308", ville:"Belz"},
+		{lat:"47.856359", long:"-3.749388", ville:"Pont-Aven"},
+		{lat:"47.918562", long:"-2.819527", ville:"Moréac Ados"},
+		{lat:"48.117621", long:"-1.688325", ville:"Rennes GGB"}
+	]
+		
+	function initMap(){
+	
+		var container = L.DomUtil.get('map');
+		if(container != null){
+			container._leaflet_id = null;
+		}
+
+		var map = L.map('map').setView([48.5, -0.7], 7);
+		
+		
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(map);
+		
+		if($('#checkbox-2').is(':checked')){
+			for (var i = 0; i < warleur.length; i += 1) {
+				L.marker([warleur[i].lat, warleur[i].long],{icon: new L.Icon({iconUrl: 'http://www.breizh.net/images/pucebleue90.gif'})}).bindTooltip(warleur[i].ville,{permanent: false, direction: 'left'}).addTo(map);
+			}		
+		}
+		if($('#checkbox-1').is(':checked')){
+			for (var i = 0; i < kendalch.length; i += 1) {
+				L.marker([kendalch[i].lat, kendalch[i].long],{icon: new L.Icon({iconUrl: 'http://www.breizh.net/images/puceverte90.gif'})}).bindTooltip(kendalch[i].ville,{permanent: false, direction: 'left'}).addTo(map);
+			}		
+		}
+	}
+
+	$(document).ready(function() {
+		$('#checkbox-1').attr("checked", true);
+		$('#checkbox-2').attr("checked", true);
+		
+		initMap();
+		
+		$('#checkbox-1').change(function() {
+			initMap();     
+		});
+		
+		$('#checkbox-2').change(function() {
+			initMap();     
+		});
+	});
+
+</script>
+
+
+
+</body>
+</html>
